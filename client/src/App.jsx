@@ -8,7 +8,7 @@ import Orders from "./pages/Orders";
 import Inventory from "./pages/Inventory";
 import Menu from "./pages/Menu";
 import Reports from "./pages/Reports";
-import Settings from "./pages/Settings";
+import Settings from "./pages/settings/Settings";
 import Employees from "./pages/Employees";
 import Purchases from "./pages/Purchases";
 

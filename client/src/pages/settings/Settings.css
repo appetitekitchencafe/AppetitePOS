@@ -1,0 +1,140 @@
+/* =========================
+   SETTINGS PAGE
+========================= */
+
+.settings-page {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.settings-header {
+  margin-bottom: 30px;
+}
+
+.settings-header h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #222;
+}
+
+.settings-header p {
+  margin-top: 8px;
+  color: #777;
+  font-size: 15px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.settings-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.08);
+  transition: .3s;
+}
+
+.settings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+.settings-card h2 {
+  margin-bottom: 20px;
+  color: #ff6b00;
+  font-size: 22px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: 20px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: .25s;
+  box-sizing: border-box;
+  background: white;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255,107,0,.15);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.primary-btn {
+  background: linear-gradient(135deg,#ff7a18,#ff4b2b);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .25s;
+  font-weight: bold;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255,107,0,.3);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:768px){
+
+.settings-page{
+padding:15px;
+}
+
+.settings-header h1{
+font-size:24px;
+}
+
+.settings-card{
+padding:18px;
+}
+
+.grid-2{
+grid-template-columns:1fr;
+}
+
+}

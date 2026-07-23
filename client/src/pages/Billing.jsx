@@ -376,7 +376,7 @@ export default function Billing() {
               <img
                 src={
                   item.image
-                    ? `http://localhost:5000/uploads/${item.image}`
+                    ? `http://appetitepos-production.up.railway.app/uploads/${item.image}`
                     : "https://via.placeholder.com/70"
                 }
                 alt={item.name}

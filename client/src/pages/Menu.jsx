@@ -295,7 +295,7 @@ export default function Menu() {
         <img
           src={
             item.image
-              ? `http://localhost:5000/uploads/${item.image}`
+              ? `https://appetitepos-production.up.railway.app/uploads/${item.image}`
               : "https://via.placeholder.com/250x180?text=No+Image"
           }
           alt={item.name}
