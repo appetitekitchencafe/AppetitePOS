@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.0.2:5000/api",
+  baseURL: "https://appetitepos-production.up.railway.app/api",
 });
 
-// Automatically attach JWT to every request
+// Automatically attach JWT
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -18,14 +18,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle expired/invalid tokens
+// Handle expired token
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-
       window.location.href = "/";
     }
 
