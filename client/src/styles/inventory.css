@@ -1,0 +1,83 @@
+.inventory-title{
+    font-size:32px;
+    font-weight:700;
+    margin-bottom:25px;
+}
+
+.inventory-search{
+    width:100%;
+    max-width:400px;
+    padding:12px 16px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+    margin-bottom:25px;
+    outline:none;
+}
+
+.inventory-search:focus{
+    border-color:#2563eb;
+}
+
+.inventory-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.inventory-table th{
+    background:#2563eb;
+    color:#fff;
+    padding:16px;
+    text-align:left;
+    font-size:15px;
+}
+
+.inventory-table td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+}
+
+.inventory-table tr:hover{
+    background:#f8fafc;
+}
+
+.low-stock{
+    color:#dc2626;
+    font-weight:700;
+}
+
+.good-stock{
+    color:#16a34a;
+    font-weight:700;
+}
+
+.stock-btn{
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.stock-btn:hover{
+    background:#1d4ed8;
+}
+
+@media(max-width:768px){
+
+.inventory-table{
+    display:block;
+    overflow-x:auto;
+}
+
+.inventory-title{
+    font-size:26px;
+}
+
+}

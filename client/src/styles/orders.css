@@ -1,0 +1,121 @@
+.orders-title{
+    font-size:32px;
+    font-weight:700;
+    margin-bottom:25px;
+}
+
+.orders-search{
+    width:100%;
+    max-width:400px;
+    padding:12px 16px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+    margin-bottom:25px;
+    outline:none;
+}
+
+.orders-search:focus{
+    border-color:#2563eb;
+}
+
+.order-card{
+    background:#fff;
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.order-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.order-header h2{
+    margin:0;
+}
+
+.order-info{
+    display:flex;
+    gap:40px;
+    margin-bottom:20px;
+}
+
+.order-items-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:20px;
+}
+
+.order-items-table th{
+    background:#f3f4f6;
+    padding:12px;
+    text-align:left;
+}
+
+.order-items-table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+}
+
+.status{
+    color:white;
+    padding:8px 14px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.status.pending{
+    background:#f59e0b;
+}
+
+.status.preparing{
+    background:#2563eb;
+}
+
+.status.ready{
+    background:#16a34a;
+}
+
+.status.cancelled{
+    background:#dc2626;
+}
+
+.cancel-btn{
+    background:#dc2626;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.2s;
+}
+
+.cancel-btn:hover{
+    background:#b91c1c;
+}
+
+@media(max-width:768px){
+
+.order-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+}
+
+.order-info{
+    flex-direction:column;
+    gap:8px;
+}
+
+.order-items-table{
+    display:block;
+    overflow-x:auto;
+}
+
+}

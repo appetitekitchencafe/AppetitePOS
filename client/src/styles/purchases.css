@@ -1,0 +1,84 @@
+.page-title{
+    margin-bottom:25px;
+}
+
+.purchase-form,
+.purchase-table,
+.report-section{
+    background:#fff;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+.form-row{
+    display:flex;
+    gap:15px;
+    margin-bottom:15px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.form-row input,
+.form-row select{
+    flex:1;
+    min-width:180px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.form-row button{
+    padding:12px 18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.save-btn{
+    margin-top:10px;
+    background:#16a34a;
+    color:white;
+    font-weight:600;
+}
+
+.purchase-table table,
+.recent-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.purchase-table th,
+.purchase-table td,
+.recent-table th,
+.recent-table td{
+    border-bottom:1px solid #eee;
+    padding:14px;
+    text-align:left;
+}
+
+.purchase-table th,
+.recent-table th{
+    background:#f7f7f7;
+    font-weight:600;
+}
+
+.delete-btn{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+tfoot th{
+    background:#fafafa;
+    font-size:17px;
+}

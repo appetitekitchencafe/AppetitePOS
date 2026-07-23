@@ -1,0 +1,108 @@
+.kitchen-title{
+    font-size:32px;
+    font-weight:700;
+    margin-bottom:30px;
+}
+
+.kitchen-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+    gap:25px;
+}
+
+.kitchen-card{
+    background:#ffffff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    transition:.25s;
+}
+
+.kitchen-card:hover{
+    transform:translateY(-6px);
+}
+
+.kitchen-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.kitchen-header h2{
+    margin:0;
+    font-size:22px;
+}
+
+.status{
+    padding:8px 14px;
+    border-radius:30px;
+    color:white;
+    font-size:13px;
+    font-weight:600;
+}
+
+.status.pending{
+    background:#f59e0b;
+}
+
+.status.preparing{
+    background:#2563eb;
+}
+
+.status.ready{
+    background:#16a34a;
+}
+
+.kitchen-item{
+    padding:10px 0;
+    font-size:17px;
+    border-bottom:1px solid #eee;
+}
+
+.kitchen-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+.start-btn,
+.ready-btn{
+    flex:1;
+    border:none;
+    color:white;
+    padding:14px;
+    font-size:16px;
+    font-weight:600;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.start-btn{
+    background:#2563eb;
+}
+
+.start-btn:hover{
+    background:#1d4ed8;
+}
+
+.ready-btn{
+    background:#16a34a;
+}
+
+.ready-btn:hover{
+    background:#15803d;
+}
+
+@media(max-width:700px){
+
+.kitchen-grid{
+    grid-template-columns:1fr;
+}
+
+.kitchen-title{
+    font-size:26px;
+}
+
+}
