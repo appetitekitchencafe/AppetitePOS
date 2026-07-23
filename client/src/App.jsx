@@ -8,6 +8,7 @@ import Orders from "./pages/Orders";
 import Inventory from "./pages/Inventory";
 import Menu from "./pages/Menu";
 import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
 import Employees from "./pages/Employees";
 import Purchases from "./pages/Purchases";
 
@@ -23,6 +24,7 @@ export default function App() {
   <Route path="/inventory" element={<Inventory />} />
   <Route path="/menu" element={<Menu />} />
   <Route path="/reports" element={<Reports />} />
+  <Route path="/settings" element={<Settings />} />
   <Route path="/employees" element={<Employees />} />
   <Route path="/purchases" element={<Purchases />} />
 </Routes>
