@@ -11,6 +11,9 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/settings/Settings";
 import Employees from "./pages/Employees";
 import Purchases from "./pages/Purchases";
+import OnlineMenu from "./pages/OnlineMenu";
+import OnlineCart from "./pages/OnlineCart";
+import OrderSuccess from "./pages/OrderSuccess";
 
 export default function App() {
   return (
@@ -27,6 +30,11 @@ export default function App() {
   <Route path="/settings" element={<Settings />} />
   <Route path="/employees" element={<Employees />} />
   <Route path="/purchases" element={<Purchases />} />
+  <Route path="/order" element={<OnlineMenu />} />
+
+<Route path="/cart" element={<OnlineCart />} />
+
+<Route path="/order-success/:id" element={<OrderSuccess />} />
 </Routes>
     </BrowserRouter>
   );

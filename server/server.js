@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+require("./services/whatsappService");
+const { sendWhatsApp } = require("./services/whatsappService");
 
 dotenv.config();
 
@@ -22,6 +24,7 @@ const receiptRoutes = require("./routes/receiptRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
+const onlineRoutes = require("./routes/onlineRoutes");
 
 // ===================== MIDDLEWARE =====================
 app.use(cors());
@@ -54,6 +57,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/employees", employeeRoutes);
 
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/online", onlineRoutes);
 
 // ===================== HOME =====================
 app.get("/", async (req, res) => {
@@ -103,6 +107,23 @@ app.use((req, res) => {
 // ===================== START =====================
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+
   console.log(`🚀 Server running on port ${PORT}`);
+
+  setTimeout(async () => {
+
+    await sendWhatsApp(
+      "8499908891",
+      `🍔 Appetite Kitchen
+
+Congratulations!
+
+WhatsApp Automation is Working.
+
+Your POS is now connected successfully. 🎉`
+    );
+
+  }, 8000);
+
 });

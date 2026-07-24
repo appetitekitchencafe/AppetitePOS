@@ -18,6 +18,8 @@ export default function Sidebar({ open, closeSidebar }) {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const role = (user?.role || "Admin").toLowerCase();
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -29,55 +31,55 @@ export default function Sidebar({ open, closeSidebar }) {
       name: "Dashboard",
       icon: <FaTachometerAlt />,
       path: "/dashboard",
-      roles: ["Admin", "Cashier", "Manager"],
+      roles: ["admin", "cashier", "manager"],
     },
     {
       name: "Billing",
       icon: <FaCashRegister />,
       path: "/billing",
-      roles: ["Admin", "Cashier"],
+      roles: ["admin", "cashier"],
     },
     {
       name: "Kitchen",
       icon: <FaHamburger />,
       path: "/kitchen",
-      roles: ["Admin", "Kitchen"],
+      roles: ["admin", "kitchen"],
     },
     {
       name: "Orders",
       icon: <FaClipboardList />,
       path: "/orders",
-      roles: ["Admin", "Cashier", "Manager"],
+      roles: ["admin", "cashier", "manager"],
     },
     {
       name: "Inventory",
       icon: <FaBoxes />,
       path: "/inventory",
-      roles: ["Admin", "Manager"],
+      roles: ["admin", "manager"],
     },
     {
       name: "Menu",
       icon: <FaUtensils />,
       path: "/menu",
-      roles: ["Admin"],
+      roles: ["admin"],
     },
     {
       name: "Reports",
       icon: <FaChartBar />,
       path: "/reports",
-      roles: ["Admin", "Manager"],
+      roles: ["admin", "manager"],
     },
     {
       name: "Settings",
       icon: <FaCog />,
       path: "/settings",
-      roles: ["Admin"],
+      roles: ["admin"],
     },
     {
       name: "Staff",
       icon: <FaBoxes />,
       path: "/employees",
-      roles: ["Admin", "Manager"],
+      roles: ["admin", "manager"],
     },
   ];
 
@@ -109,25 +111,31 @@ export default function Sidebar({ open, closeSidebar }) {
         </div>
 
         <nav>
+
           {menuItems
-            .filter((item) =>
-              item.roles
-                .map((r) => r.toLowerCase())
-                .includes((user?.role || "").toLowerCase())
-            )
-            .map((item) => (
+            .filter(item => item.roles.includes(role))
+            .map(item => (
+
               <NavLink
                 key={item.name}
                 to={item.path}
                 onClick={closeSidebar}
                 className={({ isActive }) =>
-                  isActive ? "nav-item active" : "nav-item"
+                  isActive
+                    ? "nav-item active"
+                    : "nav-item"
                 }
               >
-                <span className="icon">{item.icon}</span>
+                <span className="icon">
+                  {item.icon}
+                </span>
+
                 <span>{item.name}</span>
+
               </NavLink>
+
             ))}
+
         </nav>
 
         <button

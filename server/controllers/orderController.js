@@ -1,11 +1,25 @@
 const pool = require("../config/db");
 const { addPoints } = require("./customerController");
+const { sendWhatsApp } = require("../services/whatsappService");
 
 exports.createOrder = async (req, res) => {
   const connection = await pool.getConnection();
 
   try {
-    const { cart, paymentMethod, customerId } = req.body;
+    const {
+  cart,
+  paymentMethod,
+  customerId,
+  customerName,
+  phone,
+  orderType,
+} = req.body;
+console.log("==============");
+console.log(req.body);
+console.log("customerName =", customerName);
+console.log("phone =", phone);
+console.log("orderType =", orderType);
+console.log("==============");
 
     if (!cart || cart.length === 0) {
       return res.status(400).json({
@@ -32,24 +46,30 @@ exports.createOrder = async (req, res) => {
     const [orderResult] = await connection.query(
       `
       INSERT INTO orders
-      (
-        order_number,
-        total,
-        gst,
-        grand_total,
-        payment_method,
-        status
-      )
-      VALUES (?,?,?,?,?,?)
+(
+  order_number,
+  total,
+  gst,
+  grand_total,
+  payment_method,
+  status,
+  customer_name,
+  phone,
+  order_type
+)
+VALUES (?,?,?,?,?,?,?,?,?)
       `,
       [
-        orderNumber,
-        subtotal,
-        gst,
-        grandTotal,
-        paymentMethod,
-        "Pending",
-      ]
+  orderNumber,
+  subtotal,
+  gst,
+  grandTotal,
+  paymentMethod,
+  "Pending",
+  customerName || "",
+  phone || "",
+  orderType || "Takeaway",
+]
     );
 
     const orderId = orderResult.insertId;
@@ -108,6 +128,24 @@ exports.createOrder = async (req, res) => {
     }
 
     await connection.commit();
+    if (phone) {
+  await sendWhatsApp(
+    phone,
+`🍔 Appetite Kitchen
+
+Hi ${customerName || "Customer"} 👋
+
+Your order has been received.
+
+🧾 Order No: ${orderNumber}
+
+Status: Pending
+
+We'll start preparing it shortly.
+
+Thank you ❤️`
+  );
+}
 
 // Award loyalty points
 if (customerId) {
@@ -146,46 +184,75 @@ exports.getKitchenOrders = async (req, res) => {
         id,
         order_number,
         status,
+        payment_method,
+        total,
+        gst,
+        grand_total,
         created_at
       FROM orders
-      ORDER BY id DESC
+      WHERE status IN (
+        'Pending',
+        'Accepted',
+        'Preparing',
+        'Ready'
+      )
+      ORDER BY created_at ASC
     `);
 
     for (const order of orders) {
-      const [items] = await pool.query(
-        `
+
+      const [items] = await pool.query(`
         SELECT
           m.name,
-          oi.quantity
+          oi.quantity,
+          oi.price
         FROM order_items oi
         JOIN menu_items m
           ON oi.menu_item_id = m.id
-        WHERE oi.order_id = ?
-        `,
-        [order.id]
-      );
+        WHERE oi.order_id=?
+      `,[order.id]);
 
       order.items = items;
+
     }
 
     res.json({
       success: true,
-      orders,
+      orders
     });
 
-  } catch (err) {
+  } catch(err){
+
     console.error(err);
 
     res.status(500).json({
-      success: false,
-      message: "Server Error",
+      success:false,
+      message:"Server Error"
     });
+
   }
 };
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+
+    const validStatus = [
+      "Pending",
+      "Accepted",
+      "Preparing",
+      "Ready",
+      "Picked Up",
+      "Delivered",
+      "Cancelled",
+    ];
+
+    if (!validStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
 
     await pool.query(
       `
@@ -198,7 +265,7 @@ exports.updateOrderStatus = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Order updated",
+      message: "Status Updated",
     });
 
   } catch (err) {

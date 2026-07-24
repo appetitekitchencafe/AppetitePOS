@@ -1,7 +1,7 @@
-node_modules
-# Keep environment variables out of version control
+node_modules/
 .env
 
-/generated/prisma
+.wwebjs_auth/
+.wwebjs_cache/
 
-/generated/prisma
+generated/prisma/

@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import Receipt from "../components/Receipt";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import Receipt from "../components/Receipt";
 import api from "../services/api";
 import "../styles/billing.css";
 
 export default function Billing() {
-
   const [menu, setMenu] = useState([]);
   const [bill, setBill] = useState([]);
 
@@ -29,7 +28,12 @@ export default function Billing() {
   const loadMenu = async () => {
     try {
       const res = await api.get("/menu");
-      setMenu(res.data.menu);
+
+      if (res.data.success) {
+        setMenu(res.data.menu);
+      } else {
+        setMenu([]);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -41,38 +45,32 @@ export default function Billing() {
   ];
 
   const filteredMenu = menu.filter((item) => {
-    const matchesSearch = item.name
+    const searchMatch = item.name
       .toLowerCase()
       .includes(search.toLowerCase());
 
-    const matchesCategory =
+    const categoryMatch =
       selectedCategory === "All" ||
       item.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+    return searchMatch && categoryMatch;
   });
 
   const addItem = (item) => {
-
-    const existing = bill.find(
-      (i) => i.id === item.id
-    );
+    const existing = bill.find((i) => i.id === item.id);
 
     if (existing) {
-
       setBill(
         bill.map((i) =>
           i.id === item.id
             ? {
-                ...i,
-                qty: i.qty + 1,
-              }
+              ...i,
+              qty: i.qty + 1,
+            }
             : i
         )
       );
-
     } else {
-
       setBill([
         ...bill,
         {
@@ -80,52 +78,43 @@ export default function Billing() {
           qty: 1,
         },
       ]);
-
     }
-
   };
 
   const increaseQty = (id) => {
-
     setBill(
       bill.map((i) =>
         i.id === id
           ? {
-              ...i,
-              qty: i.qty + 1,
-            }
+            ...i,
+            qty: i.qty + 1,
+          }
           : i
       )
     );
-
   };
 
   const decreaseQty = (id) => {
-
     setBill(
       bill
         .map((i) =>
           i.id === id
             ? {
-                ...i,
-                qty: i.qty - 1,
-              }
+              ...i,
+              qty: i.qty - 1,
+            }
             : i
         )
         .filter((i) => i.qty > 0)
     );
-
   };
 
   const removeItem = (id) => {
-    setBill(
-      bill.filter((i) => i.id !== id)
-    );
+    setBill(bill.filter((i) => i.id !== id));
   };
 
   const subtotal = bill.reduce(
-    (sum, item) =>
-      sum + item.price * item.qty,
+    (sum, item) => sum + item.price * item.qty,
     0
   );
 
@@ -139,21 +128,14 @@ export default function Billing() {
   });
 
   const searchCustomer = async () => {
-
     if (!phone.trim()) return;
 
     try {
-
-      const res = await api.get(
-        `/customers/phone/${phone}`
-      );
+      const res = await api.get(`/customers/phone/${phone}`);
 
       if (res.data.success) {
-
         setCustomer(res.data.customer);
-
       } else {
-
         const create = window.confirm(
           "Customer not found.\nCreate new customer?"
         );
@@ -177,23 +159,19 @@ export default function Billing() {
         );
 
         setCustomer(again.data.customer);
-
       }
-
     } catch (err) {
       console.error(err);
     }
-
   };
-    const completeOrder = async () => {
 
+  const completeOrder = async () => {
     if (bill.length === 0) {
       alert("Bill is empty.");
       return;
     }
 
     try {
-
       const res = await api.post("/orders", {
         cart: bill,
         paymentMethod,
@@ -206,37 +184,33 @@ export default function Billing() {
         handlePrint();
         setBill([]);
       }, 300);
-
     } catch (err) {
       console.error(err);
       alert("Failed to save order.");
     }
-
   };
 
   return (
-
     <DashboardLayout>
-
       <div className="billing-page">
+
+        {/* ================= LEFT SIDE ================= */}
 
         <div className="menu-side">
 
-          <h2>🍽 Menu</h2>
+          <div className="menu-header">
+            <h2>🍽 Menu</h2>
 
-          <input
-            className="search-box"
-            placeholder="Search food..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-          />
+            <input
+              className="search-box"
+              placeholder="Search food..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
           <div className="category-buttons">
-
             {categories.map((cat) => (
-
               <button
                 key={cat}
                 className={
@@ -244,250 +218,254 @@ export default function Billing() {
                     ? "active-category"
                     : ""
                 }
-                onClick={() =>
-                  setSelectedCategory(cat)
-                }
+                onClick={() => setSelectedCategory(cat)}
               >
                 {cat}
               </button>
-
             ))}
-
           </div>
 
           <div className="menu-grid">
 
-            {filteredMenu.map((item) => (
-  <div className="food-card" key={item.id}>
+            {filteredMenu.length === 0 ? (
 
-  <img
-    className="food-image"
-    src={
-      item.image
-        ? `http://192.168.0.2:5000/uploads/${item.image}`
-        : "https://via.placeholder.com/300x220?text=No+Image"
-    }
-    alt={item.name}
-  />
+              <div className="empty-menu">
+                <h3>No Menu Items</h3>
+                <p>No food items available.</p>
+              </div>
 
-  <div className="food-info">
+            ) : (
 
-    <span
-      className={
-        item.available
-          ? "badge available"
-          : "badge unavailable"
-      }
-    >
-      {item.available ? "Available" : "Out of Stock"}
-    </span>
+              filteredMenu.map((item) => (
 
-    <h3>{item.name}</h3>
+                <div
+                  className="food-card"
+                  key={item.id}
+                >
 
-    <p>{item.category}</p>
+                  <img
+                    className="food-image"
+                    src={
+                      item.image
+                        ? `https://appetitepos-production.up.railway.app/uploads/${item.image}`
+                        : "https://via.placeholder.com/300x220?text=No+Image"
+                    }
+                    alt={item.name}
+                  />
 
-    <div className="food-bottom">
+                  <div className="food-info">
 
-      <h4>₹{item.price}</h4>
+                    <span
+                      className={
+                        item.available
+                          ? "badge available"
+                          : "badge unavailable"
+                      }
+                    >
+                      {item.available
+                        ? "Available"
+                        : "Out of Stock"}
+                    </span>
 
-      <button onClick={() => addItem(item)}>
-        + Add
-      </button>
+                    <h3>{item.name}</h3>
 
-    </div>
+                    <p>{item.category}</p>
 
-  </div>
+                    <div className="food-bottom">
 
-</div>
-))}
+                      <h4>₹{item.price}</h4>
+
+                      <button
+                        disabled={!item.available}
+                        onClick={() => addItem(item)}
+                      >
+                        + Add
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              ))
+
+            )}
 
           </div>
 
         </div>
 
+        {/* ================= RIGHT SIDE ================= */}
+
         <div className="bill-side">
 
           <h2>🧾 Current Bill</h2>
 
-          <div
-            style={{
-              background: "#f8fafc",
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 20,
-            }}
-          >
+          <div className="customer-box">
 
             <input
               className="search-box"
               placeholder="Customer Phone"
               value={phone}
-              onChange={(e) =>
-                setPhone(e.target.value)
-              }
+              onChange={(e) => setPhone(e.target.value)}
             />
 
             <button
-              style={{
-                width: "100%",
-                marginTop: 10,
-              }}
+              className="customer-btn"
               onClick={searchCustomer}
             >
               Search Customer
             </button>
 
             {customer && (
-
-              <div
-                style={{
-                  marginTop: 15,
-                }}
-              >
-
-                <strong>
-                  {customer.name}
-                </strong>
-
+              <div className="customer-info">
+                <strong>{customer.name}</strong>
                 <p>{customer.phone}</p>
-
                 <p>
-                  ⭐ Loyalty Points :
-                  {" "}
+                  ⭐ Loyalty Points:{" "}
                   {customer.loyalty_points}
                 </p>
-
               </div>
-
             )}
 
           </div>
-                    {bill.length === 0 && (
-            <p>No items added.</p>
-          )}
 
-          {bill.map((item) => (
+          {bill.length === 0 ? (
 
-            <div
-              className="bill-item"
-              key={item.id}
-            >
-
-              <img
-                src={
-                  item.image
-                    ? `http://appetitepos-production.up.railway.app/uploads/${item.image}`
-                    : "https://via.placeholder.com/70"
-                }
-                alt={item.name}
-                className="bill-image"
-              />
-
-              <div className="bill-details">
-
-                <strong>{item.name}</strong>
-
-                <p>₹{item.price}</p>
-
-                <small>
-                  Total : ₹
-                  {(item.price * item.qty).toFixed(2)}
-                </small>
-
-              </div>
-
-              <div className="qty-controls">
-
-                <button
-                  onClick={() =>
-                    decreaseQty(item.id)
-                  }
-                >
-                  −
-                </button>
-
-                <span>{item.qty}</span>
-
-                <button
-                  onClick={() =>
-                    increaseQty(item.id)
-                  }
-                >
-                  +
-                </button>
-
-              </div>
-
-              <button
-                className="remove-btn"
-                onClick={() =>
-                  removeItem(item.id)
-                }
-              >
-                ❌
-              </button>
-
+            <div className="empty-bill">
+              <h3>No Items Added</h3>
+              <p>Select food items from the menu.</p>
             </div>
 
-          ))}
+          ) : (
 
-          <hr />
+            <>
 
-          <div className="summary-row">
+              <div className="bill-items">
 
-            <span>Subtotal</span>
+                {bill.map((item) => (
 
-            <span>
-              ₹{subtotal.toFixed(2)}
-            </span>
+                  <div
+                    className="bill-item"
+                    key={item.id}
+                  >
 
-          </div>
+                    <img
+                      className="bill-image"
+                      src={
+                        item.image
+                          ? `https://appetitepos-production.up.railway.app/uploads/${item.image}`
+                          : "https://via.placeholder.com/70"
+                      }
+                      alt={item.name}
+                    />
 
-          <div className="summary-row">
+                    <div className="bill-details">
 
-            <span>GST (5%)</span>
+                      <strong>{item.name}</strong>
 
-            <span>
-              ₹{gst.toFixed(2)}
-            </span>
+                      <p>₹{item.price}</p>
 
-          </div>
+                      <small>
+                        Total ₹
+                        {(item.price * item.qty).toFixed(2)}
+                      </small>
 
-          <div className="summary-row total">
+                    </div>
 
-            <span>Total</span>
+                    <div className="qty-controls">
 
-            <span>
-              ₹{grandTotal.toFixed(2)}
-            </span>
+                      <button
+                        onClick={() =>
+                          decreaseQty(item.id)
+                        }
+                      >
+                        −
+                      </button>
 
-          </div>
+                      <span>{item.qty}</span>
 
-          <select
-            className="payment-select"
-            value={paymentMethod}
-            onChange={(e) =>
-              setPaymentMethod(
-                e.target.value
-              )
-            }
-          >
-            <option>Cash</option>
-            <option>UPI</option>
-            <option>Card</option>
-          </select>
+                      <button
+                        onClick={() =>
+                          increaseQty(item.id)
+                        }
+                      >
+                        +
+                      </button>
 
-          <button
-            className="complete-btn"
-            onClick={completeOrder}
-          >
-            Complete Order
-          </button>
+                    </div>
+
+                    <button
+                      className="remove-btn"
+                      onClick={() =>
+                        removeItem(item.id)
+                      }
+                    >
+                      ✕
+                    </button>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+              <div className="bill-summary">
+
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
+                </div>
+
+                <div className="summary-row">
+                  <span>GST (5%)</span>
+                  <span>₹{gst.toFixed(2)}</span>
+                </div>
+
+                <div className="summary-row total">
+                  <span>Total</span>
+                  <span>₹{grandTotal.toFixed(2)}</span>
+                </div>
+
+                <select
+                  className="payment-select"
+                  value={paymentMethod}
+                  onChange={(e) =>
+                    setPaymentMethod(e.target.value)
+                  }
+                >
+                  <option value="Cash">
+                    Cash
+                  </option>
+
+                  <option value="UPI">
+                    UPI
+                  </option>
+
+                  <option value="Card">
+                    Card
+                  </option>
+
+                </select>
+
+                <button
+                  className="complete-btn"
+                  onClick={completeOrder}
+                >
+                  Complete Order
+                </button>
+              </div>
+
+            </>
+
+          )}
 
         </div>
 
       </div>
-            <div style={{ display: "none" }}>
+
+      <div style={{ display: "none" }}>
         <Receipt
           ref={receiptRef}
           bill={bill}
@@ -501,6 +479,5 @@ export default function Billing() {
       </div>
 
     </DashboardLayout>
-
   );
 }

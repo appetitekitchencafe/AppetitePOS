@@ -6,23 +6,38 @@ import "./DashboardLayout.css";
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const openSidebar = () => {
+    setSidebarOpen(true);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   return (
     <div className="layout">
 
       <Sidebar
         open={sidebarOpen}
-        closeSidebar={() => setSidebarOpen(false)}
+        closeSidebar={closeSidebar}
       />
 
       <div className="main">
 
         <Header
-          openSidebar={() => setSidebarOpen(true)}
+          openSidebar={openSidebar}
         />
 
-        <div className="content">
+        <main
+          className="content"
+          onClick={() => {
+            if (window.innerWidth <= 768 && sidebarOpen) {
+              closeSidebar();
+            }
+          }}
+        >
           {children}
-        </div>
+        </main>
 
       </div>
 

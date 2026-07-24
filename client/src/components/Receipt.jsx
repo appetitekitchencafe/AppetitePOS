@@ -31,7 +31,7 @@ const Receipt = forwardRef(
           </p>
 
           <p style={{ margin: "5px 0" }}>
-            +91 98765 43210
+            +91 8499908891
           </p>
 
           <hr />
