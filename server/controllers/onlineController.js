@@ -1,17 +1,20 @@
 const pool = require("../config/db");
 
+// =======================
+// GET MENU
+// =======================
 exports.getMenu = async (req, res) => {
   try {
     const [menu] = await pool.query(
-  "SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name"
-);
+      "SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name"
+    );
 
     res.json({
       success: true,
       menu,
     });
   } catch (err) {
-    console.error(err);
+    console.error("GET MENU ERROR:", err);
 
     res.status(500).json({
       success: false,
@@ -20,6 +23,9 @@ exports.getMenu = async (req, res) => {
   }
 };
 
+// =======================
+// CREATE ONLINE ORDER
+// =======================
 exports.createOrder = async (req, res) => {
   try {
     const {
@@ -28,64 +34,22 @@ exports.createOrder = async (req, res) => {
       orderType,
       cart,
     } = req.body;
+
     console.log("===== ONLINE ORDER =====");
-console.log(req.body);
-console.log("Customer:", customerName);
-console.log("Phone:", phone);
-console.log("Order Type:", orderType);
+    console.log(req.body);
 
     let total = 0;
 
     cart.forEach((item) => {
-      total += item.price * item.qty;
-    });
-
-    const pool = require("../config/db");
-
-exports.getMenu = async (req, res) => {
-  try {
-    const [menu] = await pool.query(
-  "SELECT * FROM menu_items WHERE available = 1 ORDER BY category, name"
-);
-
-    res.json({
-      success: true,
-      menu,
-    });
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-
-exports.createOrder = async (req, res) => {
-  try {
-    const {
-      customerName,
-      phone,
-      orderType,
-      cart,
-    } = req.body;
-    console.log("===== ONLINE ORDER =====");
-console.log(req.body);
-console.log("Customer:", customerName);
-console.log("Phone:", phone);
-console.log("Order Type:", orderType);
-
-    let total = 0;
-
-    cart.forEach((item) => {
-      total += item.price * item.qty;
+      total += Number(item.price) * Number(item.qty);
     });
 
     const [order] = await pool.query(
-      `INSERT INTO online_orders
-      (customer_name,phone,order_type,status,total)
-      VALUES (?,?,?,?,?)`,
+      `
+      INSERT INTO online_orders
+      (customer_name, phone, order_type, status, total)
+      VALUES (?, ?, ?, ?, ?)
+      `,
       [
         customerName,
         phone,
@@ -97,9 +61,11 @@ console.log("Order Type:", orderType);
 
     for (const item of cart) {
       await pool.query(
-        `INSERT INTO online_order_items
-        (order_id,menu_id,qty,price)
-        VALUES (?,?,?,?)`,
+        `
+        INSERT INTO online_order_items
+        (order_id, menu_id, qty, price)
+        VALUES (?, ?, ?, ?)
+        `,
         [
           order.insertId,
           item.id,
@@ -113,7 +79,9 @@ console.log("Order Type:", orderType);
       success: true,
       orderId: order.insertId,
     });
+
   } catch (err) {
+    console.error("CREATE ONLINE ORDER ERROR:");
     console.error(err);
 
     res.status(500).json({
@@ -123,16 +91,20 @@ console.log("Order Type:", orderType);
   }
 };
 
+// =======================
+// GET ORDER STATUS
+// =======================
 exports.getOrderStatus = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT * FROM online_orders WHERE id=?",
+      "SELECT * FROM online_orders WHERE id = ?",
       [req.params.id]
     );
 
     if (rows.length === 0) {
       return res.status(404).json({
         success: false,
+        message: "Order not found",
       });
     }
 
@@ -140,63 +112,9 @@ exports.getOrderStatus = async (req, res) => {
       success: true,
       order: rows[0],
     });
+
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-
-
-    for (const item of cart) {
-      await pool.query(
-        `INSERT INTO online_order_items
-        (order_id,menu_id,qty,price)
-        VALUES (?,?,?,?)`,
-        [
-          order.insertId,
-          item.id,
-          item.qty,
-          item.price,
-        ]
-      );
-    }
-
-    res.json({
-      success: true,
-      orderId: order.insertId,
-    });
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-
-exports.getOrderStatus = async (req, res) => {
-  try {
-    const [rows] = await pool.query(
-      "SELECT * FROM online_orders WHERE id=?",
-      [req.params.id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-      });
-    }
-
-    res.json({
-      success: true,
-      order: rows[0],
-    });
-  } catch (err) {
+    console.error("GET ORDER STATUS ERROR:");
     console.error(err);
 
     res.status(500).json({
