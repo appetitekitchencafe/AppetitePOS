@@ -29,8 +29,7 @@ exports.updateOrderStatus = async (req, res) => {
 
       switch (status) {
         case "Preparing":
-          message =
-`👨‍🍳 Appetite Kitchen
+          message = `👨‍🍳 Appetite Kitchen
 
 Hi ${customer.customer_name},
 
@@ -42,8 +41,7 @@ Thank you ❤️`;
           break;
 
         case "Ready":
-          message =
-`✅ Appetite Kitchen
+          message = `✅ Appetite Kitchen
 
 Hi ${customer.customer_name},
 
@@ -55,8 +53,7 @@ Thank you ❤️`;
           break;
 
         case "Completed":
-          message =
-`🎉 Appetite Kitchen
+          message = `🎉 Appetite Kitchen
 
 Hi ${customer.customer_name},
 
@@ -79,14 +76,14 @@ See you again ❤️`;
       message: "Order updated",
     });
 
-  catch (err) {
-  console.error("CREATE ORDER ERROR:");
-  console.error(err);
+  } catch (err) {
+    console.error("UPDATE ORDER ERROR:");
+    console.error(err);
 
-  res.status(500).json({
-    success: false,
-    message: err.message,
-    error: err
-  });
-}
+    res.status(500).json({
+      success: false,
+      message: err.message,
+      error: err,
+    });
+  }
 };
