@@ -1,38 +1,64 @@
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 
-const client = new Client({
-  authStrategy: new LocalAuth(),
-  puppeteer: {
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  },
-});
+const ENABLE_WHATSAPP = process.env.ENABLE_WHATSAPP === "true";
 
-client.on("qr", (qr) => {
-  console.log("\n================================");
-  console.log("📱 Scan this QR with WhatsApp");
-  console.log("================================\n");
+let client = null;
 
-  qrcode.generate(qr, { small: true });
-});
+// Only initialize WhatsApp locally
+if (ENABLE_WHATSAPP) {
+  client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+      ],
+    },
+  });
 
-client.on("authenticated", () => {
-  console.log("✅ WhatsApp Authenticated");
-});
+  client.on("qr", (qr) => {
+    console.log("\n================================");
+    console.log("📱 Scan this QR with WhatsApp");
+    console.log("================================\n");
 
-client.on("ready", () => {
-  console.log("🚀 WhatsApp Connected");
-});
+    qrcode.generate(qr, { small: true });
+  });
 
-client.on("auth_failure", (msg) => {
-  console.log("❌ Auth Failed:", msg);
-});
+  client.on("authenticated", () => {
+    console.log("✅ WhatsApp Authenticated");
+  });
 
-client.initialize();
+  client.on("ready", () => {
+    console.log("🚀 WhatsApp Connected");
+  });
+
+  client.on("auth_failure", (msg) => {
+    console.log("❌ Auth Failed:", msg);
+  });
+
+  client.on("disconnected", (reason) => {
+    console.log("⚠️ WhatsApp Disconnected:", reason);
+  });
+
+  client.initialize();
+} else {
+  console.log("🚫 WhatsApp is disabled.");
+}
 
 async function sendWhatsApp(phone, message) {
   try {
+    if (!ENABLE_WHATSAPP) {
+      console.log("📵 WhatsApp sending skipped (disabled).");
+      return true;
+    }
+
+    if (!client) {
+      console.log("❌ WhatsApp client not initialized.");
+      return false;
+    }
+
     const cleaned = phone.replace(/\D/g, "");
 
     const finalNumber = cleaned.startsWith("91")
@@ -47,15 +73,17 @@ async function sendWhatsApp(phone, message) {
 
     if (!numberId) {
       console.log("❌ This number is not registered on WhatsApp.");
-      return;
+      return false;
     }
 
     await client.sendMessage(numberId._serialized, message);
 
     console.log("✅ WhatsApp Sent Successfully!");
 
+    return true;
   } catch (err) {
     console.error("❌ WhatsApp Error:", err);
+    return false;
   }
 }
 
